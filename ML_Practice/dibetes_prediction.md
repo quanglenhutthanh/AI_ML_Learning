@@ -114,14 +114,3 @@ y_predict = clf.predict(x_test)
 print(clf.best_score_)
 print(clf.best_params_)
 ```
-
-1. Introduction
-2. Prerequisites
-3. Installation
-4. Dataset
-5. Implamentation
-5.1. Data Preparation
-5.2. Data Preprocessing
-5.3. Model Selection
-5.4. Model Evaluation
-5.5. Model Optimization
