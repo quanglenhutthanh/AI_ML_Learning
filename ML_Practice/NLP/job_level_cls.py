@@ -2,8 +2,17 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import OneHotEncoder
+import re
+
+def filter_location(location)
+    result = re.findall(pattern:"\,\s[A-Z]{2}", location)
+    if len(result)
+        return result[0][2:]
+    else
+        return location
 
 data = pd.read_excel("NLP/final_project.ods", engine="odf", dtype=str)
+data["location"] = data["location"].apply(filter_location)
 #print(data.head())
 #print(data["career_level"].value_counts())
 
@@ -21,4 +30,6 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_
 encoder = OneHotEncoder()
 result = encoder.fit_transform(x_train[["location"]])
 print(result.shape)
+
+
 
