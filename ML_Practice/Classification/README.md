@@ -119,3 +119,7 @@ y_predict = clf.predict(x_test)
 print(clf.best_score_)
 print(clf.best_params_)
 ```
+
+
+/Library/Developer/CommandLineTools/usr/bin/python3.9
+/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9
