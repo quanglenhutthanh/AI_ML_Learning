@@ -1,20 +1,17 @@
+import os
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 
-def check_device():
-    print(torch.__version__)
-    print(torch.cuda.is_available())
-   
-check_device()
-
 # Step 1: Load the dataset
 transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,),(0.5,))])
+root_path = os.path.expanduser('/Users/quanglnt/Documents/AI_ML/Github Learning/AI_ML_Learning/Deep Learning/Torch/data')
 
-train_dataset = datasets.MNIST(root='./data', download=True, train=True, transform=transform)
-test_dataset = datasets.MNIST(root='./data', download=True, train=False, transform=transform)
+print(root_path)
+train_dataset = datasets.MNIST(root=root_path, download=False, train=True, transform=transform)
+test_dataset = datasets.MNIST(root=root_path, download=True, train=False, transform=transform)
 train_loader = DataLoader(dataset=train_dataset, batch_size=64, shuffle=True)
 test_loader = DataLoader(dataset=test_dataset, batch_size=64, shuffle=False)
 # Step 2: Define the Neural Network
@@ -38,7 +35,7 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(model.parameters(), lr=0.01)
 
 # Step 4: Train the model
-epochs = 5
+epochs = 15
 for epoch in range(epochs):
     for batch_idx, (data, target) in enumerate(train_loader):
         # Forward pass

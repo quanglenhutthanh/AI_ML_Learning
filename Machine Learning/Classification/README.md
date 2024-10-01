@@ -45,9 +45,16 @@ This dataset contains medical records of patients, aimed at predicting whether o
 # Implamentation
 ## Data Preparation
 The dataset is loaded using pandas.
+
+read_csv
 ```python
 data = pd.read_csv("diabetes.csv")
 print(data.head())
+```
+
+read_excel
+```python
+data = pd.read_excel("Classification/data/stroke_classification.xlsx",dtype=str)
 ```
 
 Use ydata-profiling to gain insights in to the dataset.
@@ -66,15 +73,15 @@ In this project, we will use some of essential functions provided by scikit-lear
 
 **LabelEncoder** converts caterical variebles into numerical values.
 
-**StandardScaler** 
 
-train-test split data
+
+using **train_test_split** function to device dataset into 2 subsets, one for training model and one for testing it.
 
 ```python
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state = 42)
 ```
-
-data scaler
+**StandardScaler** 
+Data scaler
 ```python
 scaler = StandardScaler()
 x_train = scaler.fit_transform(x_train)
