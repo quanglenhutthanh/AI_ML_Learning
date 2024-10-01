@@ -5,7 +5,8 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report, confusion_matrix
 from sklearn.model_selection import GridSearchCV
 
 def generate_profile_report(data):
@@ -26,7 +27,8 @@ def run_classification_models(data, target_column):
 
     models ={
         'SVM' : SVC(),
-        'RandomForest': RandomForestClassifier()
+        'RandomForest': RandomForestClassifier(),
+        'DecisionTree': DecisionTreeClassifier()
     }
 
     metrics = {
@@ -53,7 +55,14 @@ def run_classification_models(data, target_column):
     for model_name, metric_scores in results.items():
         print(f"{model_name:<20} {metric_scores['accuracy']:<10.4f} {metric_scores['precision']:<10.4f} {metric_scores['recall']:<10.4f} {metric_scores['f1_score']:<10.4f}")
 
+    conf_matrix = confusion_matrix(y_test, y_predict)
+    print("Confusion Matrix:")
+    print(conf_matrix)
 
+    # Classification Report (includes precision, recall, f1-score)
+    class_report = classification_report(y_test, y_predict)
+    print("Classification Report:")
+    print(class_report)
 
 
 

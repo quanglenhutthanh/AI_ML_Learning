@@ -88,10 +88,35 @@ x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 ```
 ## Model Selection
+### Support Vector Machine
+Support Vector Machine is a supervised machine learning algorithm use for classification and regression tasks. The primary goal of SVM is find the optimal hyperplate that seperate data points in different classes.
+
+### Decision Tree
+The Decision Tree algorithm is a popular supervised learning method used for both classification and regression tasks. It models decisions in a tree-like structure, where each internal node represents a "decision" or "test" on an attribute, each branch represents the outcome of the decision, and each leaf node represents a class label (in classification) or a value (in regression).
+
+![image](/Machine%20Learning/Classification/img/decision_tree.png)
+
+### Random Forest
+Random Forest is an ensemble learning method primarily used for classification and regression tasks. It builds multiple decision trees and merges them together to get a more accurate and stable prediction. The idea is to combine the predictions of multiple decision trees to reduce the likelihood of overfitting, improve accuracy, and enhance robustness.
+
+![image](/Machine%20Learning/Classification/img/random_forest.jpg)
+
 ```python
-model = SVC()
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
+
+ models ={
+        'SVM' : SVC(),
+        'RandomForest': RandomForestClassifier(),
+        'DecisionTree': DecisionTreeClassifier()
+    }
 ```
-training model and make prediction
+
+Train and test the model
+- The `fit()` function will train the model using training data `x_train` and the correspond lable `y_train'
+- After training the model make prediction on the test data `x_test` using `model.predict`
+
 
 ```python
 model.fit(x_train, y_train)
@@ -100,13 +125,28 @@ print(y_predict)
 ```
 ## Model Evaluation
 
+Evaluate performance of the model by calculate metrics such as: accuracy, precision, recall and f1 score
+
 ```python
-accuracy = accuracy_score(y_test, y_predict)
-print(f"Accuracy: {accuracy}")
+'accuracy' : accuracy_score(y_test, y_predict),
+'precision' : precision_score(y_test, y_predict,average="weighted"),
+'recall' : recall_score(y_test, y_predict, average="weighted"),
+'f1_score' : f1_score(y_test, y_predict, average="weighted")
+```
+Show confusion matrix
+```python
+conf_matrix = confusion_matrix(y_test, y_predict)
+```
+
+View classification report
+```python
+class_report = classification_report(y_test, y_predict)
 ```
 
 ## Model Optimization
+Use gridSearchCV to perform hyperparameter tuning for algorithms
 
+example:
 ```python
 params = {
     "C": [0.1, 1, 10],
@@ -126,7 +166,3 @@ y_predict = clf.predict(x_test)
 print(clf.best_score_)
 print(clf.best_params_)
 ```
-
-
-/Library/Developer/CommandLineTools/usr/bin/python3.9
-/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9
