@@ -100,10 +100,10 @@ model.classifier = classifier
 
 - Optimizer is an algorithm that updates the model's parameters based on the gradients. It decides how to change the parameters to reduce the loss.
 
-- Train the classifier layers using backpropagation using the pre-trained network to get the features
+### Train the classifier layers using backpropagation using the pre-trained network to get the features
+We use pre-trained model for feature extraction, we train the classifier using back backpropagation.
 
-
-
+Backpropagation is the process used in neural network to minimize error in prediction. It helps to update the weights of the network to reduce loss value (the difference between predicted values and actual values).
 
 
 - Track the loss and accuracy on the validation set to determine the best hyperparameters
