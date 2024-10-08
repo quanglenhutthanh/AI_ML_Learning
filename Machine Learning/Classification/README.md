@@ -73,8 +73,6 @@ In this project, we will use some of essential functions provided by scikit-lear
 
 **LabelEncoder** converts caterical variebles into numerical values.
 
-
-
 using **train_test_split** function to device dataset into 2 subsets, one for training model and one for testing it.
 
 ```python
