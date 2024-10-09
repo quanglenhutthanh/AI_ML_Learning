@@ -15,8 +15,9 @@ def get_args():
     parser.add_argument('data_dir', type=str)
     parser.add_argument('--save_dir',type=str)
     parser.add_argument('--arch', type=str, default='vgg16')
-    parser.add_argument('--learning_rate', type=float)
-    parser.add_argument('--hidden_units', type=int)
+    parser.add_argument('--learning_rate', type=float, default=0.001)
+    parser.add_argument('--hidden_unit', type=int, default=512)
+    parser.add_argument('--epochs',type=int, default=5)
     return parser.parse_args()
 
 def load_data(args):
@@ -36,7 +37,7 @@ def load_data(args):
         ]),
         'valid_test' : transforms.Compose([
             transforms.CenterCrop(224),
-            transforms.ToTensor,
+            transforms.ToTensor(),
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ])
     }
@@ -52,7 +53,7 @@ def load_data(args):
         'valid' : DataLoader(dataset=image_datesets['valid'], batch_size=64),
         'test' : DataLoader(dataset=image_datesets['test'], batch_size=64)
     }
-    print(image_datesets['train'].class_to_idx)
+    # print(image_datesets['train'].class_to_idx)
 
     return image_datesets, data_loaders
 
@@ -62,15 +63,14 @@ def validate_model(model, validate_data):
     correct = 0
     total = 0
     criterion = nn.NLLLoss()
-    optimizer = optim.Adam(model.classifier.parameters(), lr=0.001)
     model.eval()
     with torch.no_grad():
         for inputs, labels in validate_data:
             inputs, labels = inputs.to(device), labels.to(device)
 
-            outputs = model(input)
+            outputs = model(inputs)
             loss = criterion(outputs, labels)
-            valid_loss += loss.item() * input.size[0]
+            valid_loss += loss.item() * inputs.size(0)
 
             _, predicted = torch.max(outputs, 1)
             total += labels.size(0)
@@ -80,7 +80,7 @@ def validate_model(model, validate_data):
 
     return valid_loss, accuracy
 
-def train_model(args, image_datasets, data_loaders, epochs=5):
+def train_model(args, image_datasets, data_loaders):
     device = get_device()
     if args.arch == 'vgg13':
         model = models.vgg13(pretrained=True)
@@ -97,22 +97,22 @@ def train_model(args, image_datasets, data_loaders, epochs=5):
     in_feature_of_pretrained_model = model.classifier[0].in_features
     number_of_data_classes = len(image_datasets['train'].classes)
     classifier = nn.Sequential(
-        nn.Linear(in_feature_of_pretrained_model, 2048),
+        nn.Linear(in_feature_of_pretrained_model, args.hidden_unit),
         nn.ReLU(),
         nn.Dropout(0.5),
-        nn.Linear(2048, number_of_data_classes),
+        nn.Linear(args.hidden_unit, number_of_data_classes),
         nn.LogSoftmax(dim=1)
     )
     model.classifier = classifier
 
     criterion = nn.NLLLoss()
-    optimizer = optim.Adam(model.classifier.parameters(), lr=0.001)
+    optimizer = optim.Adam(model.classifier.parameters(), lr=args.learning_rate)
     model.to(device=device)
-    for epoch in range(epochs):
+    for epoch in range(args.epochs):
         train_loss = 0
         valid_loss = 0
         accuracy = 0
-        progress_bar = tqdm(enumerate(data_loaders['train']), total=len(data_loaders['train']), desc=f'Epoch {epoch+1}/{epochs}')
+        progress_bar = tqdm(enumerate(data_loaders['train']), total=len(data_loaders['train']), desc=f'Epoch {epoch+1}/{args.epochs}')
         for batch_idx, (inputs, labels) in progress_bar:
             inputs, labels = inputs.to(device), labels.to(device)
 
@@ -130,10 +130,21 @@ def train_model(args, image_datasets, data_loaders, epochs=5):
             progress_bar.set_postfix({'batch_loss': loss.item()})
         valid_loss, accuracy = validate_model(model=model, validate_data=data_loaders['valid'])
 
-    print(f"Epoch {epoch+1}/{epochs}.. "
+    print(f"Epoch {epoch+1}/{args.epochs}.. "
         f"Train loss: {train_loss/len(data_loaders['train']):.3f}.. "
         f"Validation loss: {valid_loss:.3f}.. "
         f"Validation accuracy: {accuracy:.3f}")
+    
+    model.class_to_idx = image_datasets['train'].class_to_idx
+    checkpoint = {
+        'classifier' : model.classifier,
+        'state_dict' : model.state_dict(),
+        'epochs' : args.epochs,
+        'optim_state' : optimizer.state_dict(),
+        'class_to_idx' : model.class_to_idx
+    }
+
+    torch.save(checkpoint,'checkpoint.pth')
 
 def get_device():
     if torch.cuda.is_available():
@@ -142,7 +153,8 @@ def get_device():
         return torch.device('mps')
     return torch.device('cpu')
 
-def save_checkpoint():
+def save_checkpoint(model, epochs, datasets, save_dir):
+    
     print('saved')
 
 if __name__ == '__main__':
